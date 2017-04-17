@@ -13,7 +13,6 @@
 #include <limits.h>
 #include <stdio.h>
 
-
 class SmartInteger {
 	private:
 		// the sole member variable of SmartInteger
