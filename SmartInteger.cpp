@@ -10,12 +10,15 @@
 #include "SmartInteger.hpp"
 
 #include <limits>
+#include <exception>
+#include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 
-int MAX_INT = numeric_limits<int>::max();
-int MIN_INT = numeric_limits<int>::min();
+const int MAX_INT = numeric_limits<int>::max();
+const int MIN_INT = numeric_limits<int>::min();
 
 SmartInteger::SmartInteger(){
 	this->num = 0;
@@ -25,129 +28,178 @@ SmartInteger::SmartInteger(int num) {
 	this->num = num;
 }
 
-int SmartInteger::getValue() {
+const int SmartInteger::getValue() const {
 	return this->num;
 }
 
-void SmartInteger::operator<<() {
-	cout << getValue() << endl;
+std::ostream& operator<<(std::ostream& out, const SmartInteger& num) {
+	return out << num.getValue();
 }
 
-friend bool operator<(SmartInteger first, SmartInteger second) {
-	// let Roz implement this
+const bool operator<(const SmartInteger first, const SmartInteger second) {
+	if (first.getValue() < second.getValue()) {
+		return true;
+	}
+	return false;
+	//what should it do if one or both of them exceeds 4 bytes?
 }
 
-friend bool operator>(SmartInteger first, SmartInteger second) {
+const bool operator>(const SmartInteger first, const SmartInteger second) {
 	if (first.getValue() > second.getValue()) {
 		return true;
 	}
 	return false;
 }
 
-friend bool operator<=(SmartInteger first, SmartInteger second) {
-	// let Roz implement this
-}
-
-friend bool operator>=(SmartInteger first, SmartInteger second) {
-	if (first.getValue() >= second.getValue()) {
+const bool operator<=(const SmartInteger first, const SmartInteger second) {
+	if (first.getValue() <= second.getValue()) {
 		return true;
-	}numeric_limits<int>::max();
+	}
 	return false;
 }
 
-friend bool operator==(SmartInteger first, SmartInteger second) {
-	// let Roz implement this
+const bool operator>=(const SmartInteger first, const SmartInteger second) {
+	if (first.getValue() >= second.getValue()) {
+		return true;
+	}
+	return false;
 }
 
-friend bool operator!=(SmartInteger first, SmartInteger second) {
+const bool operator==(const SmartInteger first, const SmartInteger second) {
+	if (first.getValue() == second.getValue()) {
+		return true;
+	}
+	return false;
+}
+
+const bool operator!=(const SmartInteger first, const SmartInteger second) {
 	if (first.getValue() != second.getValue()) {
 		return true;
 	}
 	return false;
 }
 
-friend SmartInteger operator+(SmartInteger first, SmartInteger second) {
-	// let Roz implement this
+SmartInteger operator+(const SmartInteger first, const SmartInteger second) {
+	if ((second.getValue() > 0) &&
+			(second.getValue() > INT_MAX - first.getValue())) {
+		/* `first SmartInteger - second SmartInteger` would overflow */
+		throw exception();
+	}
+	else if ((second.getValue() < 0) &&
+			(second.getValue() < INT_MIN - first.getValue())) {
+		/* `first SmartInteger - second SmartInteger` would underflow */
+		throw exception();
+	}
+	SmartInteger sum(first.getValue() + second.getValue());
+	return sum;
 }
 
-friend SmartInteger operator-(SmartInteger first, SmartInteger second) {
-	if ((first.getValue() < 0) &&
+SmartInteger operator-(SmartInteger first, SmartInteger second) {
+	if ((second.getValue() < 0) &&
 			(second.getValue() > INT_MAX + first.getValue())) {
 		/* `first SmartInteger - second SmartInteger` would overflow */
-		throw exception;
+		throw exception();
 	}
-	if ((first.getValue() > 0) &&
+	if ((second.getValue() > 0) &&
 			(second.getValue() < INT_MIN + first.getValue())) {
 		/* `first SmartInteger - second SmartInteger` would underflow */
-		throw exception;
+		throw exception();
 	}
-	return first.getValue() - second.getValue();
+	SmartInteger difference(first.getValue() - second.getValue());
+	return difference;
 }
 
-friend SmartInteger operator*(SmartInteger first, SmartInteger second) {
-	// let Roz implement this one
+SmartInteger operator*(SmartInteger first, SmartInteger second) {
+	if ((abs(INT_MAX/first.getValue()) > abs(second.getValue()))
+			|| (abs(INT_MAX/second.getValue()) < abs(first.getValue()))) {
+		throw exception();
+	}
+	SmartInteger product(first.getValue() * second.getValue());
+	return product;
 }
 
-friend SmartInteger operator+=(SmartInteger first, SmartInteger second) {
-	if ((first.getValue() > 0) &&
+SmartInteger operator+=(SmartInteger first, SmartInteger second) {
+	if ((second.getValue() > 0) &&
 			(first.getValue() > INT_MAX - second.getValue())){
-		/* `first SmartInteger + second SmartInteger` would overflow */;
-		throw exception;
+		/* `first SmartInteger + second SmartInteger` would overflow */
+		throw exception();
 	}
 	if ((second.getValue() < 0) &&
 			(first.getValue() < INT_MIN - second.getValue())) {
 		/* `first SmartInteger + second SmartInteger` would underflow */
-		throw exception;
+		throw exception();
 	}
 	first.num = first.getValue() + second.getValue();
-	return first.getValue();
+	return first;
 }
 
-friend SmartInteger operator-=(SmartInteger first, SmartInteger second) {
-	// let Roz implement this one
-}
-
-friend SmartInteger operator*=(SmartInteger first, SmartInteger second) {
-	if (first.getValue() > INT_MAX / first.getValue()) {
-		/* `first SmartInteger * second SmartInteger` would overflow */
-		throw exception;
+SmartInteger operator-=(SmartInteger first, SmartInteger second) {
+	if ((second.getValue() < 0) &&
+			(first.getValue() > INT_MAX + second.getValue())){
+		/* `first SmartInteger + second SmartInteger` would overflow */
+		throw exception();
 	}
-	if ((second.getValue() < INT_MIN / second.getValue())) {
+	if ((second.getValue() > 0) &&
+			(first.getValue() < INT_MIN + second.getValue())) {
+		/* `first SmartInteger + second SmartInteger` would underflow */
+		throw exception();
+	}
+	first.num = first.getValue() - second.getValue();
+	return first;
+}
+
+SmartInteger operator*=(SmartInteger first, SmartInteger second) {
+	if (first.getValue() > INT_MAX / second.getValue()) {
+		/* `first SmartInteger * second SmartInteger` would overflow */
+		throw exception();
+	}
+	if ((first.getValue() < INT_MIN / second.getValue())) {
 		/* `first SmartInteger * second SmartInteger` would underflow */
-		throw exception;
+		throw exception();
 	}
 	// there may be need to check for -1 for two's complement machines
 	if ((first.getValue() == -1) && (second.getValue() == INT_MIN)) {
 		/* `first SmartInteger * second SmartInteger` can overflow */
-		throw exception;
+		throw exception();
 	}
 	if ((second.getValue() == -1) && (first.getValue() == INT_MIN)) {
 		/* `first SmartInteger * second SmartInteger`
 		 *  (or `first SmartInteger / second SmartInteger`) can overflow */
-		throw exception;
+		throw exception();
 	}
 	first.num = first.getValue() * second.getValue();
-	return first.getValue();
+	return first;
 }
 
-SmartInteger operator-(SmartInteger num) {
-	// let Roz implement this one
-}
-
-SmartInteger operator++(SmartInteger num) {
-	if ((num.getValue() > 0) &&
-			(num.getValue() > INT_MAX - 1)){
-		/* `SmartInteger + 1` would overflow */;
-		throw exception;
+SmartInteger SmartInteger::operator-() const {
+	if (this->getValue() == INT_MIN) {
+		throw exception();
 	}
-	if (num.getValue() < INT_MIN - 1) {
-		/* `SmartInteger + 1` would underflow */
-		throw exception;
-	}
-	num.num = num.getValue() + 1;
-	return num.getValue();
+	return 0 - this->getValue();
 }
 
-SmartInteger operator--(SmartInteger num) {
-	// let Roz implement this one
+SmartInteger SmartInteger::operator++() {
+	if ((this->getValue() > 0) &&
+			(this->getValue() >= INT_MAX)) {
+		/* `SmartInteger + 1` would overflow */
+		throw exception();
+	}
+	//int newVal = this->getValue() + 1;
+	//cout << "New value: " << newVal << endl;
+	//SmartInteger inc(newVal);
+	//cout << inc.getValue() << endl;
+	return SmartInteger(this->getValue() + 1);
+}
+
+SmartInteger SmartInteger::operator--() {
+	if ((this->getValue() < 0) &&
+			(this->getValue() <= INT_MIN)){
+		/* `SmartInteger - 1` would overflow */
+		throw exception();
+	}
+	//int newVal = this->getValue() - 1;
+	//cout << "New value: " << newVal << endl;
+	//SmartInteger dec(newVal);
+	//cout << dec.getValue() << endl;
+	return SmartInteger(this->getValue() - 1);
 }

@@ -11,7 +11,10 @@
 #define A5_SMARTINTEGER_HPP
 
 #include <limits.h>
+#include <exception>
+#include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 
 class SmartInteger {
 	private:
@@ -36,13 +39,13 @@ class SmartInteger {
 		 *
 		 * @return The integer value of the SmartInteger
 		 */
-		int getValue();
+		const int getValue() const;
 
 		/**
 		 * @brief Displays integer value as if calling getValue()
 		 *
 		 */
-		void operator<<();
+		friend std::ostream& operator<<(std::ostream& out, const SmartInteger& num);
 
 		/**
 		 * @brief Determines whether or not value of one SmartInteger is less
@@ -50,7 +53,7 @@ class SmartInteger {
 		 *
 		 * @return Boolean for whether first SmartInteger is less than second
 		 */
-		friend bool operator<(SmartInteger first, SmartInteger second);
+		const friend bool operator<(const SmartInteger first, const SmartInteger second);
 
 		/**
 		 * @brief Determines whether or not value of first SmartInteger is
@@ -59,7 +62,7 @@ class SmartInteger {
 		 * @return Boolean for whether first SmartInteger is greater than
 		 * second
 		 */
-		friend bool operator>(SmartInteger first, SmartInteger second);
+		const friend bool operator>(const SmartInteger first, const SmartInteger second);
 
 		/**
 		 * @brief Determines whether or not value of first SmartInteger is
@@ -68,7 +71,7 @@ class SmartInteger {
 		 * @return Boolean for whether first SmartInteger is less than or
 		 * equal to second SmartInteger
 		 */
-		friend bool operator<=(SmartInteger first, SmartInteger second);
+		const friend bool operator<=(const SmartInteger first, const SmartInteger second);
 
 		/**
 		 * @brief Determines whether or not value of first SmartInteger is
@@ -77,7 +80,7 @@ class SmartInteger {
 		 * @return Boolean for whether first SmartInteger is greater than or
 		 * equal to second SmartInteger
 		 */
-		friend bool operator>=(SmartInteger first, SmartInteger second);
+		const friend bool operator>=(const SmartInteger first, const SmartInteger second);
 
 		/**
 		 * @brief Determines whether or not first SmartInteger is equal to
@@ -86,7 +89,7 @@ class SmartInteger {
 		 * @return Boolean for whether first SmartInteger is equal to second
 		 * SmartInteger
 		 */
-		friend bool operator==(SmartInteger first, SmartInteger second);
+		const friend bool operator==(const SmartInteger first, const SmartInteger second);
 
 		/**
 		 * @brief Determines whether or not first SmartInteger is NOT equal to
@@ -95,14 +98,14 @@ class SmartInteger {
 		 * @return Boolean for whether first SmartInteger is equal to second
 		 * SmartInteger
 		 */
-		friend bool operator!=(SmartInteger first, SmartInteger second);
+		const friend bool operator!=(const SmartInteger first, const SmartInteger second);
 
 		/**
 		 * @brief Adds first SmartInteger to second to calculate sum
 		 *
 		 * @return The sum of the SmartIntegers
 		 */
-		friend SmartInteger operator+(SmartInteger first, SmartInteger second);
+		friend SmartInteger operator+(const SmartInteger first, const SmartInteger second);
 
 		/**
 		 * @brief Subtracts second SmartInteger from first to calculate
@@ -149,21 +152,23 @@ class SmartInteger {
 		 *
 		 * @return Negated version of original SmartInteger
 		 */
-		SmartInteger operator-(SmartInteger num);
+		SmartInteger operator-() const;
 
 		/**
 		 * @brief Increments current SmartInteger
 		 *
 		 * @return The incremented SmartInteger
 		 */
-		SmartInteger operator++(SmartInteger num);
+		SmartInteger operator++();
 
 		/**
 		 * @brief Decrements current SmartInteger
 		 *
 		 * @return The decremented SmartInteger
 		 */
-		SmartInteger operator--(SmartInteger num);
+		SmartInteger operator--();
 
 
 };
+
+#endif //A5_SMARTINTEGER_HPP

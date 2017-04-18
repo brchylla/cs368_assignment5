@@ -10,6 +10,11 @@ int main() {
     std::cout << "n2.getValue() should be 0: " << n2.getValue() << std::endl;
     std::cout << std::endl;
 
+    SmartInteger n4(5);
+    std::cout << n4.getValue() << std::endl;
+    --n4;
+    std::cout << n4.getValue() << std::endl;
+
     // No need to implement custom copy assignment operator - this should just work
     std::cout << "Changing value of n2..." << std::endl;
     n2 = 3;
